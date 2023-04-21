@@ -15,4 +15,6 @@ export interface Store {
   messages: Message[]
   chats: Chat[]
   chatIndex: number
+  current?: Message
+  sending: boolean
 }

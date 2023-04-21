@@ -1,9 +1,12 @@
 import { ChangeEvent, useCallback, useState } from "react"
-import { sendMessage } from "./store"
+import { useSnapshot } from "valtio"
+import { store, sendMessage } from "./store"
+import { useStyles } from "./styles"
 
 export default function Chat() {
-  const [loading, setLoading] = useState<boolean>(false)
   const [content, setContent] = useState<string>("")
+  const styles = useStyles()
+  const {sending} = useSnapshot(store)
 
   const handleContentChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -13,23 +16,25 @@ export default function Chat() {
   )
 
   const handleSend = async () => {
-    if (loading) return
-    setLoading(true)
-    try {
-      await sendMessage(content)
-      setContent("")
-      setLoading(false)
-    } catch (e) {
-      setLoading(false)
+    if (sending) return
+    setContent("")
+    await sendMessage(content)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSend()
     }
   }
 
   return (
-    <div>
-      <input value={content} onChange={handleContentChange} />
-      <button disabled={loading} onClick={handleSend}>
-        send
-      </button>
+    <div className={styles.chat}>
+      <div className={styles.input}>
+        <input value={content} onChange={handleContentChange} onKeyDown={handleKeyDown} />
+        <button disabled={sending} onClick={handleSend}>
+          send
+        </button>
+      </div>
     </div>
   )
 }
