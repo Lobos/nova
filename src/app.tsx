@@ -32,7 +32,7 @@ function App() {
         <span onClick={handleHeaderClick}>NOVA</span>
       </div>
 
-      { state.systemVisible && <System system={state.system} /> }
+      { state.systemVisible && <System /> }
 
       <Messages />
 

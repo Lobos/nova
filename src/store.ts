@@ -43,7 +43,7 @@ export const summary = async (length = 0) => {
   console.log(result)
   if (result.data.choices[0]?.message) {
     store.chats = [
-      { assistant: result.data.choices[0].message.content },
+      { assistant: result.data.choices[0].message.content.replaceAll('对话者', '你') },
       ...store.chats.slice(summaryLength),
     ]
   }
@@ -142,6 +142,7 @@ export const clearMessages = () => {
   store.chats = []
   setStorage('messages', [])
   setStorage('chats', [])
+  toggleSystem(false)
 }
 
 export const setKey = (key: string) => {
@@ -152,6 +153,12 @@ export const setKey = (key: string) => {
 export const setSystem = (system: string) => {
   store.system = system
   localStorage.setItem("system", system)
+  toggleSystem(false)
+}
+
+export const setSummary = (summary: string) => {
+  store.chats[0].assistant = summary
+  toggleSystem(false)
 }
 
 export const toggleSystem = (visible?: boolean) => {

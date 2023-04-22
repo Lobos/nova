@@ -14,6 +14,7 @@ export const useStyles = createUseStyles({
   },
   root: {
     position: 'relative',
+    overflow: 'auto',
     maxWidth: 600,
     margin: '0 auto',
     display: 'flex',
@@ -127,19 +128,16 @@ export const useStyles = createUseStyles({
   },
 
   currentStatus: {
-    '& > span': {
+    '& > span, & > button': {
       margin: 'auto',
     },
-
-    '& > a': {
-      margin: 'auto',
-      cursor: 'pointer',
-    }
   },
 
   chat: {
-    marginTop: 20,
-    padding: '0 10px',
+    position: 'sticky',
+    bottom: 0,
+    background: '#fff',
+    padding: '10px 10px 0',
 
     '& button': {
       backgroundColor: 'transparent',
