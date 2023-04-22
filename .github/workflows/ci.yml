@@ -12,11 +12,8 @@ jobs:
       with:
         persist-credentials: false
     - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 7
-          run_install: false
+      with:
+        version: 8
     - name: Install and Build
       run: |
         pnpm i
