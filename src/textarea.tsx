@@ -24,7 +24,7 @@ function DynamicTextarea({
   useEffect(() => {
     if (textareaRef.current) {
       setState({
-        height: textareaRef.current.scrollHeight,
+        height: textareaRef.current.scrollHeight + 2,
       })
     }
   }, [value])

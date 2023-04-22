@@ -6,7 +6,6 @@ export interface Message {
 export interface Chat {
   user?: string
   assistant: string
-  summary?: boolean
 }
 
 export interface Store {
@@ -17,4 +16,5 @@ export interface Store {
   chatIndex: number
   current?: Message
   sending: boolean
+  systemVisible: boolean
 }

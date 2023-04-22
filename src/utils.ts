@@ -16,7 +16,7 @@ export const checkKey = async (key: string) => {
   throw new Error("send error")
 }
 
-export const getChats = (chats: Chat[], current: Message) => {
+export const chatsToMessages = (chats: Chat[], current: Message) => {
   const messages: Message[] = []
   chats.forEach((chat) => {
     if (chat.user) {
@@ -29,6 +29,21 @@ export const getChats = (chats: Chat[], current: Message) => {
 
   messages.push(current)
   return messages
+}
+
+export const messagesToChats = (messages: Message[]) => {
+  const chats: Chat[] = []
+
+  let currentChat: Chat = {} as Chat 
+  for (const message of messages) {
+    if (message.role === 'user') {
+      currentChat = { user: message.content, assistant: '' }
+      chats.push(currentChat)
+    } else {
+      currentChat.assistant = message.content
+    }
+  }
+  return chats
 }
 
 export const getPrompt = (chats: Chat[], message: string, system = "") => {
@@ -46,4 +61,14 @@ export const getPrompt = (chats: Chat[], message: string, system = "") => {
   prompt += "<|im_start|>user " + message + "<|im_end|><|im_start|>assistant"
 
   return prompt
+}
+
+export const setStorage = (key: string, item: any) => {
+  localStorage.setItem(key, JSON.stringify(item))
+}
+
+export const getStorage = <T>(key: string, def: T):T => {
+  const item = localStorage.getItem(key)
+  if (!item) return def
+  return JSON.parse(item)
 }

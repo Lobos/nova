@@ -13,6 +13,7 @@ export const useStyles = createUseStyles({
     },
   },
   root: {
+    position: 'relative',
     maxWidth: 600,
     margin: '0 auto',
     display: 'flex',
@@ -20,30 +21,71 @@ export const useStyles = createUseStyles({
     height: '100vh'
   },
 
+
+  header: {
+    height: 50,
+    position: 'fixed',
+    zIndex: 100,
+    width: '100%',
+    maxWidth: 600,
+    top: 0,
+    backgroundColor: '#fff',
+    borderBottom: 'solid 1px #ccc',
+    textAlign: 'center',
+    display: 'flex',
+
+    '& span': {
+      margin: 'auto',
+      color: '#6FB98F',
+      fontSize: 20,
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+    }
+  },
+
   system: {
+    position: 'fixed',
+    backgroundColor: '#fff',
+    top: 50,
+    width: '100%',
+    maxWidth: 600,
     padding: 20,
+    zIndex: 100,
 
     '& label': {
       display: 'block',
       marginBottom: 10,
     },
+
+    '& > div': {
+      marginBottom: 30,
+
+      '&:last-child': {
+        marginBottom: 0,
+      },
+    },
+
+    '& button': {
+      margin: 'auto',
+    },
   },
 
   messages: {
     flex: 1,
+    marginTop: 50,
 
     '& > div': {
       position: 'relative',
       display: 'flex',
-      padding: 20,
-      // boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
+      padding: '20px 20px 20px 20px',
     }
   },
 
   message: {
     flex: 1,
     lineHeight: 1.5,
-    padding: '0 10px',
+    marginLeft: 15,
 
     '& + a': {
       cursor: 'pointer',
@@ -63,13 +105,20 @@ export const useStyles = createUseStyles({
     alignItems: 'center',
     fontSize: 12,
     color: '#fff',
+    cursor: 'pointer',
+
+    '&$god': {
+      backgroundColor: 'red',
+    }
   },
+
+  god: {},
 
   user: {
     background: '#f2f2f2',
 
     '& $avatar': {
-      backgroundColor: '#333',
+      backgroundColor: '#666',
     }
   },
 
@@ -89,8 +138,28 @@ export const useStyles = createUseStyles({
   },
 
   chat: {
-    backgroundColor: '#fff',
     marginTop: 20,
+    padding: '0 10px',
+
+    '& button': {
+      backgroundColor: 'transparent',
+      border: 0,
+      padding: 0,
+      height: 20,
+      marginLeft: 10,
+      lineHeight: 1,
+      cursor: 'pointer',
+
+      '& svg': {
+        width: 20,
+        height: 20,
+        stroke: '#aaa',
+      }
+    },
+
+    '& button:disabled svg': {
+      stroke: '#eee',
+    }
   },
 
   input: {
@@ -107,6 +176,7 @@ export const useStyles = createUseStyles({
     transition: 'border-color 0.3s ease',
     outline: 'none',
     display: 'flex',
+    backgroundColor: '#fff',
 
     '&:hover': {
       borderColor: '#6FB98F',

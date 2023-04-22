@@ -1,6 +1,7 @@
 import { proxy, useSnapshot } from "valtio"
 import { checkKey } from "./utils"
 import { setKey } from "./store"
+import { useStyles } from "./styles"
 
 interface KeyStore {
   key: string
@@ -9,18 +10,20 @@ interface KeyStore {
 }
 
 const keyStore = proxy<KeyStore>({
-  key: "",
+  key: localStorage.getItem('key') || '',
   loading: false,
 })
 
 export default function Key() {
   const { key, error, loading } = useSnapshot(keyStore)
+  const styles = useStyles()
 
   const handleCheck = async () => {
     // 处理 loading
     keyStore.loading = true
     try {
       await checkKey(key)
+      keyStore.loading = false
       setKey(key)
     } catch (e: any) {
       keyStore.loading = false
@@ -30,11 +33,14 @@ export default function Key() {
 
   return (
     <div>
-      Please input key.
-      <input value={key} onChange={(e) => (keyStore.key = e.target.value)} />
-      <button onClick={handleCheck}>ok</button>
+      <label>OpenAI Key</label>
+      <input className={styles.input} value={key} onChange={(e) => (keyStore.key = e.target.value)} />
       {error && <div>{error}</div>}
-      {loading && <div>checking...</div>}
+      <div>
+        <button disabled={loading} className={styles.button} onClick={handleCheck}>
+          {loading ? '测试key是否有效中...' : '保存Key'}
+        </button>
+      </div>
     </div>
   )
 }

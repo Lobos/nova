@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { useSnapshot } from "valtio"
-import { store } from "./store"
+import { store, toggleSystem } from "./store"
 import Key from "./key"
 import { System } from "./system"
 import Chat from "./chat"
@@ -13,12 +13,14 @@ function App() {
   const placeholderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    //setTimeout(() => {
-      if (placeholderRef.current) {
-        placeholderRef.current.scrollIntoView()
-      }
-    //}, 10)
+    if (placeholderRef.current) {
+      placeholderRef.current.scrollIntoView()
+    }
   }, [state.messages.length + (state.current ? 1 : 0)])
+
+  const handleHeaderClick = useCallback(()=> {
+    toggleSystem()
+  }, [])
 
   if (!state.key) {
     return <Key />
@@ -26,7 +28,11 @@ function App() {
 
   return (
     <div className={styles.root}>
-      <System system={state.system} />
+      <div className={styles.header}>
+        <span onClick={handleHeaderClick}>NOVA</span>
+      </div>
+
+      { state.systemVisible && <System system={state.system} /> }
 
       <Messages />
 
