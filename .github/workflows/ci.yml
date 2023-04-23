@@ -23,4 +23,4 @@ jobs:
       with:
         folder: dist
         ssh-key: ${{ secrets.DEPLOY_KEY }}
-        BRANCH: gh-pages
+        branch: gh-pages

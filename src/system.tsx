@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { useSnapshot } from "valtio"
-import { store, clearMessages, setSystem, setSummary, toggleSystem } from "./store"
+import { store, clearMessages, setSystem, setSummary, toggleSystem, importData } from "./store"
 import Textarea from './textarea'
 import Key from './key'
 import { useStyles } from "./styles"
+import { Chat, ImportData, Message } from "./interface"
+import { downloadData, importFromFile } from "./utils"
 
 interface Props {
   label: string
@@ -34,7 +36,6 @@ export const System = () => {
     summary = state.chats[0].assistant
   }
 
-
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       if (!systemRef?.current?.contains(event.target as Node)) {
@@ -48,16 +49,52 @@ export const System = () => {
     }
   }, [])
 
+  const handleExport = () => {
+    const data: ImportData = {
+      messages: state.messages as Message[],
+      chats: state.chats as Chat[],
+      system: state.system,
+    }
+
+    downloadData(data)
+  }
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      try {
+        const data = await importFromFile(file)
+        importData(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+
   return (
     <div ref={systemRef} className={styles.system}>
       <Key />
 
       <Block label="System" value={state.system || ''} onChange={setSystem} />
 
-      { summary && <Block label="Summary" value={summary} onChange={setSummary} /> }
+      {summary && <Block label="Summary" value={summary} onChange={setSummary} />}
 
       <div>
         <button className={styles.button} onClick={clearMessages}>清除当前会话</button>
+
+        <button className={styles.button} onClick={handleExport}>导出会话</button>
+
+        <label htmlFor="file-input" className={styles.button} style={{ display: 'inline-block' }}>
+          导入会话
+        </label>
+        <input
+          type="file"
+          id="file-input"
+          accept=".nov"
+          onChange={handleFileChange}
+          className="file-input"
+          style={{ display: 'none' }}
+        />
       </div>
     </div>
   )

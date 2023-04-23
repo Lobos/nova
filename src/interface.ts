@@ -13,8 +13,13 @@ export interface Store {
   system?: string
   messages: Message[]
   chats: Chat[]
-  chatIndex: number
   current?: Message
   sending: boolean
   systemVisible: boolean
+}
+
+export interface ImportData {
+  system?: string
+  messages: Message[]
+  chats: Chat[]
 }

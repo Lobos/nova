@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from "openai"
 import { proxy } from "valtio"
-import { Store, Message } from "./interface"
+import { Store, Message, ImportData } from "./interface"
 import { chatsToMessages, setStorage, getStorage, messagesToChats } from "./utils"
 
 export const store = proxy<Store>({
@@ -8,7 +8,6 @@ export const store = proxy<Store>({
   system: localStorage.getItem("system") || undefined,
   messages: getStorage('messages', []),
   chats: getStorage('chats', []),
-  chatIndex: 0,
   sending: false,
   systemVisible: getStorage('messages', []).length === 0,
 })
@@ -84,11 +83,11 @@ export const modifyMessage = (index: number, old: string, content: string, role:
     setStorage('chats', store.chats)
   } else {
     // 如果修改用户信息，表示需要删除此后所有对话
-    const messages:Message[] = [...store.messages.slice(0, Math.floor(index / 2) * 2)]
+    const messages: Message[] = [...store.messages.slice(0, Math.floor(index / 2) * 2)]
     store.messages = messages
     // 根据最近10条消息重建会话
     store.chats = messagesToChats(messages.slice(-10))
-    
+
     // 如果 content 不为空，发送消息
     sendMessage(content)
   }
@@ -142,6 +141,13 @@ export const clearMessages = () => {
   store.chats = []
   setStorage('messages', [])
   setStorage('chats', [])
+  toggleSystem(false)
+}
+
+export const importData = (data: ImportData) => {
+  store.messages = data.messages
+  store.chats = data.chats
+  store.system = data.system
   toggleSystem(false)
 }
 

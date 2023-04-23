@@ -68,7 +68,7 @@ export const useStyles = createUseStyles({
     },
 
     '& button': {
-      margin: 'auto',
+      marginRight: 20,
     },
   },
 
