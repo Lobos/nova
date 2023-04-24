@@ -6,19 +6,21 @@ import { System } from "./system"
 import Chat from "./chat"
 import Messages from "./messages"
 import { useStyles } from "./styles"
+import { useVisibleHeight } from "./hooks"
 
 function App() {
   const state = useSnapshot(store)
   const styles = useStyles()
   const placeholderRef = useRef<HTMLDivElement>(null)
+  const height = useVisibleHeight()
 
   useEffect(() => {
     if (placeholderRef.current) {
       placeholderRef.current.scrollIntoView()
     }
-  }, [state.messages.length + (state.current ? 1 : 0)])
+  }, [state.messages.length + (state.current ? 1 : 0), height])
 
-  const handleHeaderClick = useCallback(()=> {
+  const handleHeaderClick = useCallback(() => {
     toggleSystem()
   }, [])
 
@@ -32,7 +34,7 @@ function App() {
         <span onClick={handleHeaderClick}>NOVA</span>
       </div>
 
-      { state.systemVisible && <System /> }
+      {state.systemVisible && <System />}
 
       <Messages />
 
