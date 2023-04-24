@@ -10,7 +10,7 @@ interface KeyStore {
 }
 
 const keyStore = proxy<KeyStore>({
-  key: localStorage.getItem('key') || '',
+  key: localStorage.getItem("key") || "",
   loading: false,
 })
 
@@ -33,14 +33,23 @@ export default function Key() {
 
   return (
     <div>
-      <label>OpenAI Key</label>
-      <input className={styles.input} value={key} onChange={(e) => (keyStore.key = e.target.value)} />
-      {error && <div>{error}</div>}
-      <div>
-        <button disabled={loading} className={styles.button} onClick={handleCheck}>
-          {loading ? '测试key是否有效中...' : '保存Key'}
+      <label>
+        <span>OpenAI Key</span>
+
+        <button
+          disabled={loading}
+          className={styles.smallButton}
+          onClick={handleCheck}
+        >
+          {loading ? "测试key是否有效中..." : "保存Key"}
         </button>
-      </div>
+      </label>
+      <input
+        className={styles.input}
+        value={key}
+        onChange={(e) => (keyStore.key = e.target.value)}
+      />
+      {error && <div>{error}</div>}
     </div>
   )
 }

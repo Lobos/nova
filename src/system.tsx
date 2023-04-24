@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { useSnapshot } from "valtio"
-import { store, clearMessages, setSystem, setSummary, toggleSystem, importData } from "./store"
-import Textarea from './textarea'
-import Key from './key'
+import {
+  store,
+  clearMessages,
+  setSystem,
+  setSummary,
+  toggleSystem,
+  importData,
+} from "./store"
+import Textarea from "./textarea"
+import Key from "./key"
 import { useStyles } from "./styles"
 import { Chat, ImportData, Message } from "./interface"
 import { downloadData, importFromFile } from "./utils"
@@ -19,9 +26,14 @@ const Block = ({ label, value, onChange }: Props) => {
 
   return (
     <div>
-      <label>{label}</label>
+      <label>
+        <span>{label}</span>
+
+        <button className={styles.smallButton} onClick={() => onChange(text)}>
+          保存设定
+        </button>
+      </label>
       <Textarea className={styles.input} value={text} onChange={setText} />
-      <button className={styles.button} onClick={() => onChange(text)}>保存设定</button>
     </div>
   )
 }
@@ -31,7 +43,7 @@ export const System = () => {
   const state = useSnapshot(store)
   const systemRef = useRef<HTMLDivElement>(null)
 
-  let summary = ''
+  let summary = ""
   if (state.chats[0] && state.chats[0].user == null) {
     summary = state.chats[0].assistant
   }
@@ -43,9 +55,9 @@ export const System = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClick)
+    document.addEventListener("mousedown", handleClick)
     return () => {
-      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener("mousedown", handleClick)
     }
   }, [])
 
@@ -59,7 +71,9 @@ export const System = () => {
     downloadData(data)
   }
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0]
     if (file) {
       try {
@@ -75,17 +89,27 @@ export const System = () => {
     <div ref={systemRef} className={styles.system}>
       <Key />
 
-      <Block label="System" value={state.system || ''} onChange={setSystem} />
+      <Block label="System" value={state.system || ""} onChange={setSystem} />
 
-      {summary && <Block label="Summary" value={summary} onChange={setSummary} />}
+      {summary && (
+        <Block label="Summary" value={summary} onChange={setSummary} />
+      )}
 
       <div>
-        <button className={styles.button} onClick={clearMessages}>清除当前会话</button>
+        <button className={styles.button} onClick={clearMessages}>
+          清除会话
+        </button>
 
-        <button className={styles.button} onClick={handleExport}>导出会话</button>
+        <button className={styles.button} onClick={handleExport}>
+          导出
+        </button>
 
-        <label htmlFor="file-input" className={styles.button} style={{ display: 'inline-block' }}>
-          导入会话
+        <label
+          htmlFor="file-input"
+          className={styles.button}
+          style={{ display: "inline-block" }}
+        >
+          导入
         </label>
         <input
           type="file"
@@ -93,7 +117,7 @@ export const System = () => {
           accept=".nov"
           onChange={handleFileChange}
           className="file-input"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
       </div>
     </div>

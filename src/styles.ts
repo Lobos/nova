@@ -1,74 +1,79 @@
 import { createUseStyles } from "react-jss"
 
 export const useStyles = createUseStyles({
-  '@global': {
-    '*': {
-      boxSizing: 'border-box',
+  "@global": {
+    "*": {
+      boxSizing: "border-box",
     },
     body: {
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f4f4f4',
+      fontFamily: "Arial, sans-serif",
+      backgroundColor: "#f4f4f4",
       padding: 0,
       margin: 0,
     },
   },
   root: {
-    position: 'relative',
-    overflow: 'auto',
+    position: "relative",
+    overflow: "auto",
     maxWidth: 600,
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh'
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
   },
-
 
   header: {
     height: 50,
-    position: 'fixed',
+    position: "fixed",
     zIndex: 100,
-    width: '100%',
+    width: "100%",
     maxWidth: 600,
     top: 0,
-    backgroundColor: '#fff',
-    borderBottom: 'solid 1px #ccc',
-    textAlign: 'center',
-    display: 'flex',
+    backgroundColor: "#fff",
+    borderBottom: "solid 1px #ccc",
+    textAlign: "center",
+    display: "flex",
 
-    '& span': {
-      margin: 'auto',
-      color: '#6FB98F',
+    "& span": {
+      margin: "auto",
+      color: "#6FB98F",
       fontSize: 20,
-      fontStyle: 'italic',
-      fontWeight: 'bold',
-      cursor: 'pointer',
-    }
+      fontStyle: "italic",
+      fontWeight: "bold",
+      cursor: "pointer",
+    },
   },
 
   system: {
-    position: 'fixed',
-    backgroundColor: '#fff',
+    position: "fixed",
+    backgroundColor: "#fff",
     top: 50,
-    width: '100%',
+    width: "100%",
     maxWidth: 600,
     padding: 20,
     zIndex: 100,
 
-    '& label': {
-      display: 'block',
+    "& label": {
+      display: "flex",
       marginBottom: 10,
+
+      "& span": {
+        flex: 1,
+      },
+
+      "& button": {},
     },
 
-    '& > div': {
-      marginBottom: 30,
+    "& > div": {
+      marginBottom: 40,
 
-      '&:last-child': {
+      "&:last-child": {
         marginBottom: 0,
       },
     },
 
-    '& button': {
-      marginRight: 20,
+    "& $button + $button": {
+      marginLeft: 20,
     },
   },
 
@@ -76,11 +81,11 @@ export const useStyles = createUseStyles({
     flex: 1,
     marginTop: 50,
 
-    '& > div': {
-      position: 'relative',
-      display: 'flex',
-      padding: '20px 20px 20px 20px',
-    }
+    "& > div": {
+      position: "relative",
+      display: "flex",
+      padding: 20,
+    },
   },
 
   message: {
@@ -88,119 +93,124 @@ export const useStyles = createUseStyles({
     lineHeight: 1.5,
     marginLeft: 15,
 
-    '& + a': {
-      cursor: 'pointer',
-      position: 'absolute',
+    "& + a": {
+      cursor: "pointer",
+      position: "absolute",
       top: 0,
       right: 0,
-    }
+    },
   },
 
   avatar: {
     width: 28,
     height: 28,
-    borderRadius: '50%',
-    backgroundColor: '#6FB98F',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: "50%",
+    backgroundColor: "#6FB98F",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     fontSize: 12,
-    color: '#fff',
-    cursor: 'pointer',
+    color: "#fff",
+    cursor: "pointer",
 
-    '&$god': {
-      backgroundColor: 'red',
-    }
+    "&$god": {
+      backgroundColor: "red",
+    },
   },
 
   god: {},
 
   user: {
-    background: '#f2f2f2',
+    background: "#f2f2f2",
 
-    '& $avatar': {
-      backgroundColor: '#666',
-    }
+    "& $avatar": {
+      backgroundColor: "#666",
+    },
   },
 
   assistant: {
-    background: '#fff',
+    background: "#fff",
   },
 
   currentStatus: {
-    '& > span, & > button': {
-      margin: 'auto',
+    "& > span, & > button": {
+      margin: "auto",
     },
   },
 
   chat: {
-    position: 'sticky',
+    position: "sticky",
     bottom: 0,
-    background: '#fff',
-    padding: '10px 10px 0',
+    background: "#fff",
+    padding: "10px 10px 0",
 
-    '& button': {
-      backgroundColor: 'transparent',
+    "& button": {
+      backgroundColor: "transparent",
       border: 0,
       padding: 0,
       height: 20,
       marginLeft: 10,
       lineHeight: 1,
-      cursor: 'pointer',
+      cursor: "pointer",
 
-      '& svg': {
+      "& svg": {
         width: 20,
         height: 20,
-        stroke: '#aaa',
-      }
+        stroke: "#aaa",
+      },
     },
 
-    '& button:disabled svg': {
-      stroke: '#eee',
-    }
+    "& button:disabled svg": {
+      stroke: "#eee",
+    },
   },
 
   input: {
-    fontFamily: 'Arial, sans-serif',
-    width: '100%',
-    height: 'auto',
+    fontFamily: "Arial, sans-serif",
+    width: "100%",
+    height: "auto",
     padding: 10,
     fontSize: 16,
-    border: '1px solid #ccc',
+    border: "1px solid #ccc",
     borderRadius: 3,
-    resize: 'none',
+    resize: "none",
     lineHeight: 1.5,
     marginBottom: 10,
-    transition: 'border-color 0.3s ease',
-    outline: 'none',
-    display: 'flex',
-    backgroundColor: '#fff',
+    transition: "border-color 0.3s ease",
+    outline: "none",
+    display: "flex",
+    backgroundColor: "#fff",
 
-    '&:hover': {
-      borderColor: '#6FB98F',
+    "&:hover": {
+      borderColor: "#6FB98F",
     },
 
-    '&:focus': {
-      borderColor: '#6FB98F',
+    "&:focus": {
+      borderColor: "#6FB98F",
     },
 
-    '& input': {
+    "& input": {
       border: 0,
       flex: 1,
-      outline: 'none',
+      outline: "none",
       fontSize: 16,
-    }
+    },
   },
 
   button: {
-    display: 'inline-block',
-    backgroundColor: '#6FB98F',
-    color: '#fff',
-    border: 'none',
+    display: "inline-block",
+    backgroundColor: "#6FB98F",
+    color: "#fff",
+    border: "none",
     borderRadius: 3,
     fontSize: 16,
-    padding: '10px 20px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  }
+    padding: "10px 20px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
+
+  smallButton: {
+    extend: "button",
+    padding: "4px 10px",
+  },
 })
