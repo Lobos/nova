@@ -14,12 +14,11 @@ export const useStyles = createUseStyles({
   },
   root: {
     position: "relative",
-    overflow: "auto",
     maxWidth: 600,
     margin: "0 auto",
     display: "flex",
     flexDirection: "column",
-    height: "100vh",
+    minHeight: "100vh",
   },
 
   header: {
@@ -65,7 +64,7 @@ export const useStyles = createUseStyles({
     },
 
     "& > div": {
-      marginBottom: 40,
+      marginBottom: 30,
 
       "&:last-child": {
         marginBottom: 0,
