@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from "openai"
 import { proxy } from "valtio"
 import { Store, Message, ImportData } from "./interface"
-import { chatsToMessages, setStorage, getStorage, messagesToChats } from "./utils"
+import { chatsToMessages, setStorage, getStorage, messagesToChats, getContentFromStream, } from "./utils"
 
 export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
@@ -22,11 +22,10 @@ const getOpenai = () => {
 }
 
 export const summary = async (length = 0) => {
-  console.log(length)
   const { chats } = store
   const reserveLength = 2
   const summaryLength = chats.length - reserveLength
-  if (length < 1000 && chats.length < reserveLength + 8) {
+  if (length < 1000 && chats.length < reserveLength + 5) {
     return
   }
 
@@ -94,7 +93,47 @@ export const modifyMessage = (index: number, old: string, content: string, role:
 
 }
 
+const fetchMessage = async (messages: Message[]) => {
+  const decoder = new TextDecoder('utf-8')
+
+  const response = await fetch(
+    'https://api.openai.com/v1/chat/completions',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${store.key}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages,
+        stream: true,
+      }),
+    },
+  )
+
+  if (!response.body) throw new Error('error')
+
+  if (store.current) store.messages.push(store.current)
+  store.current = { role: 'assistant', content: '' }
+
+  const reader = response.body.getReader()
+  let done = false
+  while (!done) {
+    const read = await reader.read()
+    done = read.done
+    if (read.value) {
+      store.current.content += getContentFromStream(read.value, decoder)
+    }
+  }
+
+  return done && response.status === 200
+}
+
 export const sendMessage = async (content: string) => {
+  // 一次只发一条消息
+  if (store.sending) return
+
   const current: Message = { role: "user", content }
   const sendMessages: Message[] = chatsToMessages(store.chats, current)
 
@@ -107,12 +146,31 @@ export const sendMessage = async (content: string) => {
   store.systemVisible = false
 
   try {
-    const result = await getOpenai().createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: sendMessages,
+    const done = await fetchMessage(sendMessages)
+    if (!done) throw new Error('send message error')
+
+    store.messages.push(store.current)
+    store.chats.push({
+      user: content,
+      assistant: store.current.content,
     })
 
     store.current = undefined
+
+    setStorage('messages', store.messages)
+    setStorage('chats', store.chats)
+
+    summary()
+    /*
+    const result = await getOpenai().createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: sendMessages,
+      stream: true
+    }, { responseType: 'stream' })
+
+    await receiveMessage(result)
+    store.current = undefined
+
 
     const msg = result.data.choices[0]?.message
     if (msg) {
@@ -129,8 +187,14 @@ export const sendMessage = async (content: string) => {
 
       summary(result.data.usage?.total_tokens)
     }
+    */
   } catch (e) {
     console.error(e)
+    // 如果最后一条是用户消息，弹出
+    if (store.messages[store.messages.length - 1].role === 'user') {
+      store.messages.pop()
+    }
+    store.current = current
   } finally {
     store.sending = false
   }

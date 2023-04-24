@@ -1,16 +1,12 @@
 import { useSnapshot } from "valtio"
-import { store, sendMessage } from "./store"
+import { store } from "./store"
 import { useStyles } from "./styles"
 import MessageContent from "./message-content"
-import Loading from "./loading"
+import Current from "./current"
 
 export default function Messages() {
-  const { messages, current, sending } = useSnapshot(store)
+  const { messages } = useSnapshot(store)
   const styles = useStyles()
-
-  const handleRetry = () => {
-    if (current) sendMessage(current.content)
-  }
 
   return (
     <div className={styles.messages}>
@@ -18,17 +14,7 @@ export default function Messages() {
         <MessageContent key={i} index={i} message={msg} />
       ))}
 
-      {current && (
-        <>
-          <div className={styles.user}>
-            <div className={styles.avatar}>我</div>
-            <div className={styles.message}>{current.content}</div>
-          </div>
-          <div className={styles.currentStatus}>
-            {sending ? <Loading /> : <button className={styles.button} onClick={handleRetry}>retry</button>}
-          </div>
-        </>
-      )}
+      <Current />
     </div>
   )
 }

@@ -109,3 +109,14 @@ export const importFromFile = (file: File): Promise<ImportData> => {
     }
   })
 }
+
+export const getContentFromStream = (buf: Uint8Array, decoder: TextDecoder) => {
+  const text = decoder.decode(buf, { stream: true })
+  let result = ''
+  text.split(/\n+/).forEach((line) => {
+    if (line.startsWith('data: {')) {
+      result += JSON.parse(line.slice(6).trim()).choices?.[0]?.delta?.content || ''
+    }
+  })
+  return result
+}

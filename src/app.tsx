@@ -18,7 +18,7 @@ function App() {
     if (placeholderRef.current) {
       placeholderRef.current.scrollIntoView()
     }
-  }, [state.messages.length + (state.current ? 1 : 0), height])
+  }, [state.messages.length, height, state.current?.content])
 
   const handleHeaderClick = useCallback(() => {
     toggleSystem()
