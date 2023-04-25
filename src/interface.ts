@@ -13,7 +13,7 @@ export interface Store {
   system?: string
   messages: Message[]
   chats: Chat[]
-  current?: Message
+  current?: Message & { abort?: () => void }
   sending: boolean
   systemVisible: boolean
 }

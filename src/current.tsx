@@ -35,6 +35,18 @@ export default function Current() {
             )}
           </div>
         )}
+        {current.role === "assistant" && (
+          <div className={styles.currentStatus}>
+            <button
+              className={styles.button}
+              onClick={() => {
+                if (store.current?.abort) store.current.abort()
+              }}
+            >
+              Stop
+            </button>
+          </div>
+        )}
       </>
     )
   }

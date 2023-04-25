@@ -1,15 +1,21 @@
 import { Configuration, OpenAIApi } from "openai"
 import { proxy } from "valtio"
 import { Store, Message, ImportData } from "./interface"
-import { chatsToMessages, setStorage, getStorage, messagesToChats, getContentFromStream, } from "./utils"
+import {
+  chatsToMessages,
+  setStorage,
+  getStorage,
+  messagesToChats,
+  getContentFromStream,
+} from "./utils"
 
 export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
-  messages: getStorage('messages', []),
-  chats: getStorage('chats', []),
+  messages: getStorage("messages", []),
+  chats: getStorage("chats", []),
   sending: false,
-  systemVisible: getStorage('messages', []).length === 0,
+  systemVisible: getStorage("messages", []).length === 0,
 })
 
 let openai: OpenAIApi
@@ -41,7 +47,12 @@ export const summary = async (length = 0) => {
   console.log(result)
   if (result.data.choices[0]?.message) {
     store.chats = [
-      { assistant: result.data.choices[0].message.content.replaceAll('对话者', '你') },
+      {
+        assistant: result.data.choices[0].message.content.replaceAll(
+          "对话者",
+          "你"
+        ),
+      },
       ...store.chats.slice(summaryLength),
     ]
   }
@@ -68,21 +79,28 @@ export const summary = async (length = 0) => {
   */
 }
 
-export const modifyMessage = (index: number, old: string, content: string, role: 'user' | 'assistant') => {
+export const modifyMessage = (
+  index: number,
+  old: string,
+  content: string,
+  role: "user" | "assistant"
+) => {
   if (old === content) return
 
-  if (role === 'assistant') {
+  if (role === "assistant") {
     store.messages[index] = { role, content }
     store.chats.forEach((chat) => {
       if (chat[role] === old) {
         chat[role] = content
       }
     })
-    setStorage('messages', store.messages)
-    setStorage('chats', store.chats)
+    setStorage("messages", store.messages)
+    setStorage("chats", store.chats)
   } else {
     // 如果修改用户信息，表示需要删除此后所有对话
-    const messages: Message[] = [...store.messages.slice(0, Math.floor(index / 2) * 2)]
+    const messages: Message[] = [
+      ...store.messages.slice(0, Math.floor(index / 2) * 2),
+    ]
     store.messages = messages
     // 根据最近10条消息重建会话
     store.chats = messagesToChats(messages.slice(-10))
@@ -90,32 +108,34 @@ export const modifyMessage = (index: number, old: string, content: string, role:
     // 如果 content 不为空，发送消息
     sendMessage(content)
   }
-
 }
 
 const fetchMessage = async (messages: Message[]) => {
-  const decoder = new TextDecoder('utf-8')
+  const decoder = new TextDecoder("utf-8")
+  const controller = new AbortController()
 
-  const response = await fetch(
-    'https://api.openai.com/v1/chat/completions',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.key}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages,
-        stream: true,
-      }),
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${store.key}`,
     },
-  )
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages,
+      stream: true,
+    }),
+    signal: controller?.signal,
+  })
 
-  if (!response.body) throw new Error('error')
+  if (!response.body) throw new Error("error")
 
   if (store.current) store.messages.push(store.current)
-  store.current = { role: 'assistant', content: '' }
+  store.current = {
+    role: "assistant",
+    content: "",
+    abort: () => controller.abort(),
+  }
 
   const reader = response.body.getReader()
   let done = false
@@ -126,6 +146,8 @@ const fetchMessage = async (messages: Message[]) => {
       store.current.content += getContentFromStream(read.value, decoder)
     }
   }
+
+  delete store.current.abort
 
   return done && response.status === 200
 }
@@ -147,7 +169,7 @@ export const sendMessage = async (content: string) => {
 
   try {
     const done = await fetchMessage(sendMessages)
-    if (!done) throw new Error('send message error')
+    if (!done) throw new Error("send message error")
 
     store.messages.push(store.current)
     store.chats.push({
@@ -157,8 +179,8 @@ export const sendMessage = async (content: string) => {
 
     store.current = undefined
 
-    setStorage('messages', store.messages)
-    setStorage('chats', store.chats)
+    setStorage("messages", store.messages)
+    setStorage("chats", store.chats)
 
     summary()
     /*
@@ -191,7 +213,7 @@ export const sendMessage = async (content: string) => {
   } catch (e) {
     console.error(e)
     // 如果最后一条是用户消息，弹出
-    if (store.messages[store.messages.length - 1].role === 'user') {
+    if (store.messages[store.messages.length - 1].role === "user") {
       store.messages.pop()
     }
     store.current = current
@@ -203,8 +225,8 @@ export const sendMessage = async (content: string) => {
 export const clearMessages = () => {
   store.messages = []
   store.chats = []
-  setStorage('messages', [])
-  setStorage('chats', [])
+  setStorage("messages", [])
+  setStorage("chats", [])
   toggleSystem(false)
 }
 
