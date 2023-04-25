@@ -11,18 +11,30 @@ export default function Current() {
     return (
       <>
         <div className={styles[current.role]}>
-          <div className={styles.avatar}>{current.role === 'user' ? '我' : 'N'}</div>
-          <div className={styles.message}>{current.content}</div>
-        </div>
-        {current.role === 'user' &&
-          <div className={styles.currentStatus}>
-            {
-              sending ?
-                <Loading /> :
-                <button className={styles.button} onClick={() => sendMessage(current.content)}>retry</button>
-            }
+          <div className={styles.avatar}>
+            {current.role === "user" ? "我" : "N"}
           </div>
-        }
+          <div className={styles.message}>
+            {current.content}
+            {current.role === "assistant" && (
+              <span className={styles.cursorEffect}>&ensp;</span>
+            )}
+          </div>
+        </div>
+        {current.role === "user" && (
+          <div className={styles.currentStatus}>
+            {sending ? (
+              <Loading />
+            ) : (
+              <button
+                className={styles.button}
+                onClick={() => sendMessage(current.content)}
+              >
+                retry
+              </button>
+            )}
+          </div>
+        )}
       </>
     )
   }

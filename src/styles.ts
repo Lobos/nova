@@ -100,6 +100,17 @@ export const useStyles = createUseStyles({
     },
   },
 
+  cursorEffect: {
+    marginLeft: 1,
+    lineHeight: 1,
+    display: "inline-block",
+    backgroundColor: "#374151",
+    animation: "$blink 0.8s steps(1) infinite",
+  },
+  "@keyframes blink": {
+    "50%": { opacity: 0 }, // 在一半时间处隐藏光标
+  },
+
   avatar: {
     width: 28,
     height: 28,
