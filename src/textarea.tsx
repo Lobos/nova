@@ -1,20 +1,16 @@
-import { useState, ChangeEvent, useEffect, useRef } from 'react'
+import { useState, ChangeEvent, useEffect, useRef } from "react"
 
 interface DynamicTextareaProps {
-  className?: string;
-  value: string;
-  onChange: (value: string) => void;
+  className?: string
+  value: string
+  onChange: (value: string) => void
 }
 
 interface DynamicTextareaState {
-  height: number;
+  height: number
 }
 
-function DynamicTextarea({
-  className,
-  value,
-  onChange,
-}: DynamicTextareaProps) {
+function DynamicTextarea({ className, value, onChange }: DynamicTextareaProps) {
   const [state, setState] = useState<DynamicTextareaState>({
     height: 0,
   })

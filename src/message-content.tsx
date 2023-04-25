@@ -19,24 +19,37 @@ export default function MessageContent({ index, message }: Props) {
       return
     }
 
-    if (contentRef.current && message.role !== 'system') {
-      modifyMessage(index, message.content, contentRef.current.innerText, message.role)
+    if (contentRef.current && message.role !== "system") {
+      modifyMessage(
+        index,
+        message.content,
+        contentRef.current.innerText,
+        message.role
+      )
     }
     setEditable(false)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' && editable) {
+    if (event.key === "Enter" && editable) {
       handleEditable()
     }
   }
 
   return (
     <div className={styles[message.role]}>
-      <div onClick={handleEditable} className={`${styles.avatar} ${editable ? styles.god : ''}`}>
-        {editable ? 'G' : (message.role === 'user' ? '我' : 'N')}
+      <div
+        onClick={handleEditable}
+        className={`${styles.avatar} ${editable ? styles.god : ""}`}
+      >
+        {editable ? "G" : message.role === "user" ? "我" : "N"}
       </div>
-      <div ref={contentRef} onKeyDown={handleKeyDown} contentEditable={editable} className={styles.message}>
+      <div
+        ref={contentRef}
+        onKeyDown={handleKeyDown}
+        contentEditable={editable}
+        className={styles.message}
+      >
         {message.content}
       </div>
     </div>
