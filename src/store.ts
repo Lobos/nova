@@ -160,7 +160,7 @@ export const sendMessage = async (content: string) => {
   const sendMessages: Message[] = chatsToMessages(store.chats, current)
 
   if (store.system) {
-    sendMessages.unshift({ role: "system", content: store.system })
+    sendMessages.unshift({ role: "assistant", content: store.system })
   }
 
   store.sending = true

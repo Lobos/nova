@@ -89,7 +89,11 @@ export const System = () => {
     <div ref={systemRef} className={styles.system}>
       <Key />
 
-      <Block label="System" value={state.system || ""} onChange={setSystem} />
+      <Block
+        label="Assistant"
+        value={state.system || ""}
+        onChange={setSystem}
+      />
 
       {summary && (
         <Block label="Summary" value={summary} onChange={setSummary} />
