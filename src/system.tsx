@@ -5,6 +5,7 @@ import {
   clearMessages,
   setSystem,
   setSummary,
+  setTemperature,
   toggleSystem,
   importData,
 } from "./store"
@@ -90,14 +91,14 @@ export const System = () => {
       <Key />
 
       <Block
-        label="Assistant"
-        value={state.system || ""}
-        onChange={setSystem}
+        label="Temperature"
+        value={state.temperature + ""}
+        onChange={setTemperature}
       />
 
-      {summary && (
-        <Block label="Summary" value={summary} onChange={setSummary} />
-      )}
+      <Block label="System" value={state.system || ""} onChange={setSystem} />
+
+      <Block label="Summary" value={summary} onChange={setSummary} />
 
       <div>
         <button className={styles.button} onClick={clearMessages}>

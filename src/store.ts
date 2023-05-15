@@ -16,6 +16,7 @@ export const store = proxy<Store>({
   chats: getStorage("chats", []),
   sending: false,
   systemVisible: getStorage("messages", []).length === 0,
+  temperature: 0.8,
 })
 
 let openai: OpenAIApi
@@ -44,7 +45,6 @@ export const summary = async (length = 0) => {
     messages: sendMessages,
   })
 
-  console.log(result)
   if (result.data.choices[0]?.message) {
     store.chats = [
       {
@@ -85,7 +85,7 @@ export const modifyMessage = (
   content: string,
   role: "user" | "assistant"
 ) => {
-  if (old === content) return
+  // if (old === content) return
 
   if (role === "assistant") {
     store.messages[index] = { role, content }
@@ -123,6 +123,7 @@ const fetchMessage = async (messages: Message[]) => {
     body: JSON.stringify({
       model: "gpt-3.5-turbo",
       messages,
+      temperature: store.temperature,
       stream: true,
     }),
     signal: controller?.signal,
@@ -160,7 +161,7 @@ export const sendMessage = async (content: string) => {
   const sendMessages: Message[] = chatsToMessages(store.chats, current)
 
   if (store.system) {
-    sendMessages.unshift({ role: "assistant", content: store.system })
+    sendMessages.unshift({ role: "system", content: store.system })
   }
 
   store.sending = true
@@ -183,33 +184,6 @@ export const sendMessage = async (content: string) => {
     setStorage("chats", store.chats)
 
     summary()
-    /*
-    const result = await getOpenai().createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: sendMessages,
-      stream: true
-    }, { responseType: 'stream' })
-
-    await receiveMessage(result)
-    store.current = undefined
-
-
-    const msg = result.data.choices[0]?.message
-    if (msg) {
-      store.messages.push(current)
-      store.messages.push(msg)
-
-      store.chats.push({
-        user: content,
-        assistant: msg.content,
-      })
-
-      setStorage('messages', store.messages)
-      setStorage('chats', store.chats)
-
-      summary(result.data.usage?.total_tokens)
-    }
-    */
   } catch (e) {
     console.error(e)
     // 如果最后一条是用户消息，弹出
@@ -255,4 +229,13 @@ export const setSummary = (summary: string) => {
 
 export const toggleSystem = (visible?: boolean) => {
   store.systemVisible = visible == undefined ? !store.systemVisible : visible
+}
+
+export const setTemperature = (temperature: string) => {
+  const temp = Math.round(Number(temperature) * 100) / 100
+  if (isNaN(temp) || temp < 0 || temp > 2) {
+    store.temperature = 0.8
+  } else {
+    store.temperature = temp
+  }
 }

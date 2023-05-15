@@ -16,6 +16,7 @@ export interface Store {
   current?: Message & { abort?: () => void }
   sending: boolean
   systemVisible: boolean
+  temperature: number
 }
 
 export interface ImportData {
