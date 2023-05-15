@@ -1,41 +1,38 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import React, { useState } from "react"
 import { useSnapshot } from "valtio"
 import { store, sendMessage } from "./store"
 import { useStyles } from "./styles"
+import TextArea from "./textarea"
 
 export default function Chat() {
   const [content, setContent] = useState<string>("")
   const styles = useStyles()
   const { sending } = useSnapshot(store)
 
-  const handleContentChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setContent(event.target.value)
-    },
-    [setContent]
-  )
-
-  const handleSend = async () => {
-    if (sending) return
+  const handleSend = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (sending || content.length === 0) return
     setContent("")
     await sendMessage(content)
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
-      handleSend()
+      handleSend(event)
     }
   }
 
   return (
     <div className={styles.chat}>
-      <div className={styles.input}>
-        <input
+      <form onSubmit={handleSend}>
+        <TextArea
+          className={styles.input}
+          style={{ paddingRight: 40 }}
           value={content}
-          onChange={handleContentChange}
-          onKeyDown={handleKeyDown}
+          onChange={setContent}
+          onKeyUp={handleKeyUp}
         />
-        <button disabled={sending} onClick={handleSend}>
+        <button type="submit" disabled={sending}>
           <svg
             stroke="currentColor"
             fill="none"
@@ -48,7 +45,7 @@ export default function Chat() {
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
         </button>
-      </div>
+      </form>
     </div>
   )
 }

@@ -16,7 +16,7 @@ export const store = proxy<Store>({
   chats: getStorage("chats", []),
   sending: false,
   systemVisible: getStorage("messages", []).length === 0,
-  temperature: 0.8,
+  temperature: getStorage('temperature', 0.8),
 })
 
 let openai: OpenAIApi
@@ -102,8 +102,8 @@ export const modifyMessage = (
       ...store.messages.slice(0, Math.floor(index / 2) * 2),
     ]
     store.messages = messages
-    // 根据最近10条消息重建会话
-    store.chats = messagesToChats(messages.slice(-10))
+    // 根据最近8条消息重建会话
+    store.chats = messagesToChats(messages.slice(-8))
 
     // 如果 content 不为空，发送消息
     sendMessage(content)
@@ -223,7 +223,11 @@ export const setSystem = (system: string) => {
 }
 
 export const setSummary = (summary: string) => {
-  store.chats[0].assistant = summary
+  if (store.chats.length > 0) {
+    store.chats[0].assistant = summary
+  } else {
+    store.chats.unshift({ assistant: summary })
+  }
   toggleSystem(false)
 }
 
@@ -237,5 +241,6 @@ export const setTemperature = (temperature: string) => {
     store.temperature = 0.8
   } else {
     store.temperature = temp
+    setStorage("temperature", temp)
   }
 }

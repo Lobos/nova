@@ -4,13 +4,16 @@ interface DynamicTextareaProps {
   className?: string
   value: string
   onChange: (value: string) => void
+  onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void
+  style?: React.CSSProperties
 }
 
 interface DynamicTextareaState {
   height: number
 }
 
-function DynamicTextarea({ className, value, onChange }: DynamicTextareaProps) {
+function DynamicTextarea(props: DynamicTextareaProps) {
+  const { className, value, onChange, onKeyUp, style } = props
   const [state, setState] = useState<DynamicTextareaState>({
     height: 0,
   })
@@ -19,9 +22,9 @@ function DynamicTextarea({ className, value, onChange }: DynamicTextareaProps) {
 
   useEffect(() => {
     if (textareaRef.current) {
-      setState({
-        height: textareaRef.current.scrollHeight + 2,
-      })
+      // set height to 0 when value is empty else set it to scrollHeight
+      const height = value ? textareaRef.current.scrollHeight + 2 : 0
+      setState({ height })
     }
   }, [value])
 
@@ -34,7 +37,8 @@ function DynamicTextarea({ className, value, onChange }: DynamicTextareaProps) {
       ref={textareaRef}
       value={value}
       onChange={handleChange}
-      style={{ height: `${state.height}px` }}
+      onKeyUp={onKeyUp}
+      style={{ height: `${state.height}px`, ...style }}
       className={className}
     />
   )

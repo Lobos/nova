@@ -155,6 +155,10 @@ export const useStyles = createUseStyles({
     padding: "10px 10px 0",
 
     "& button": {
+      position: "absolute",
+      right: 20,
+      top: "50%",
+      transform: "translateY(-50%)",
       backgroundColor: "transparent",
       border: 0,
       padding: 0,
@@ -178,6 +182,7 @@ export const useStyles = createUseStyles({
   input: {
     fontFamily: "Arial, sans-serif",
     width: "100%",
+    minHeight: 46,
     height: "auto",
     padding: 10,
     fontSize: 16,
