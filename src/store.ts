@@ -16,7 +16,7 @@ export const store = proxy<Store>({
   chats: getStorage("chats", []),
   sending: false,
   systemVisible: getStorage("messages", []).length === 0,
-  temperature: getStorage('temperature', 0.8),
+  temperature: getStorage("temperature", 0.8),
 })
 
 let openai: OpenAIApi
@@ -121,7 +121,7 @@ const fetchMessage = async (messages: Message[]) => {
       Authorization: `Bearer ${store.key}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-1106",
       messages,
       temperature: store.temperature,
       stream: true,
