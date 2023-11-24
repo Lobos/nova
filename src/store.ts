@@ -121,7 +121,7 @@ const fetchMessage = async (messages: Message[]) => {
       Authorization: `Bearer ${store.key}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo-1106",
+      model: "gpt-3.5-turbo-0301",
       messages,
       temperature: store.temperature,
       stream: true,
@@ -161,7 +161,7 @@ export const sendMessage = async (content: string) => {
   const sendMessages: Message[] = chatsToMessages(store.chats, current)
 
   if (store.system) {
-    sendMessages.unshift({ role: "system", content: store.system })
+    sendMessages.unshift({ role: "assistant", content: store.system })
   }
 
   store.sending = true
