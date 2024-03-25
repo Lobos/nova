@@ -41,7 +41,7 @@ export const summary = async (length = 0) => {
     content: '用50字以内总结以上对话，以你为第一视角，我为对话者"',
   })
   const result = await getOpenai().createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-0125",
     messages: sendMessages,
   })
 
@@ -121,7 +121,7 @@ const fetchMessage = async (messages: Message[]) => {
       Authorization: `Bearer ${store.key}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo-0301",
+      model: "gpt-3.5-turbo-0125",
       messages,
       temperature: store.temperature,
       stream: true,
