@@ -49,6 +49,8 @@ export const useStyles = createUseStyles({
     top: 50,
     width: "100%",
     maxWidth: 600,
+    maxHeight: "calc(100vh - 50px)",
+    overflowY: "auto",
     padding: 20,
     zIndex: 100,
 

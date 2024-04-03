@@ -12,6 +12,7 @@ import {
 export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
+  model: localStorage.getItem("model") || "gpt-3.5-turbo",
   messages: getStorage("messages", []),
   chats: getStorage("chats", []),
   sending: false,
@@ -28,6 +29,13 @@ const getOpenai = () => {
   return openai
 }
 
+export const modelOptions = [
+  "gpt-3.5-turbo",
+  "gpt-3.5-turbo-0125",
+  "gpt-3.5-turbo-0301",
+  "gpt-3.5-turbo-0613",
+]
+
 export const summary = async (length = 0) => {
   const { chats } = store
   const reserveLength = 2
@@ -41,7 +49,7 @@ export const summary = async (length = 0) => {
     content: '用50字以内总结以上对话，以你为第一视角，我为对话者"',
   })
   const result = await getOpenai().createChatCompletion({
-    model: "gpt-3.5-turbo-0125",
+    model: store.model,
     messages: sendMessages,
   })
 
@@ -121,7 +129,7 @@ const fetchMessage = async (messages: Message[]) => {
       Authorization: `Bearer ${store.key}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo-0125",
+      model: store.model,
       messages,
       temperature: store.temperature,
       stream: true,
@@ -222,6 +230,12 @@ export const setSystem = (system: string) => {
   toggleSystem(false)
 }
 
+export const setModel = (model: string) => {
+  store.model = model
+  localStorage.setItem("model", model)
+  toggleSystem(false)
+}
+
 export const setSummary = (summary: string) => {
   if (store.chats.length > 0) {
     store.chats[0].assistant = summary
@@ -232,6 +246,7 @@ export const setSummary = (summary: string) => {
 }
 
 export const toggleSystem = (visible?: boolean) => {
+  console.log(visible)
   store.systemVisible = visible == undefined ? !store.systemVisible : visible
 }
 

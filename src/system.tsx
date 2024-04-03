@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useSnapshot } from "valtio"
 import {
   store,
@@ -6,8 +6,9 @@ import {
   setSystem,
   setSummary,
   setTemperature,
-  toggleSystem,
+  setModel,
   importData,
+  modelOptions,
 } from "./store"
 import Textarea from "./textarea"
 import Key from "./key"
@@ -19,9 +20,10 @@ interface Props {
   label: string
   value: string
   onChange: (value: string) => void
+  options?: string[]
 }
 
-const Block = ({ label, value, onChange }: Props) => {
+const Block = ({ label, value, onChange, options }: Props) => {
   const [text, setText] = useState<string>(value)
   const styles = useStyles()
 
@@ -34,7 +36,22 @@ const Block = ({ label, value, onChange }: Props) => {
           保存设定
         </button>
       </label>
-      <Textarea className={styles.input} value={text} onChange={setText} />
+
+      {options ? (
+        <select
+          className={styles.input}
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+        >
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <Textarea className={styles.input} value={text} onChange={setText} />
+      )}
     </div>
   )
 }
@@ -49,6 +66,7 @@ export const System = () => {
     summary = state.chats[0].assistant
   }
 
+  /*
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       if (!systemRef?.current?.contains(event.target as Node)) {
@@ -61,6 +79,7 @@ export const System = () => {
       document.removeEventListener("mousedown", handleClick)
     }
   }, [])
+  */
 
   const handleExport = () => {
     const data: ImportData = {
@@ -99,6 +118,13 @@ export const System = () => {
       <Block label="System" value={state.system || ""} onChange={setSystem} />
 
       <Block label="Summary" value={summary} onChange={setSummary} />
+
+      <Block
+        label="Model"
+        value={state.model}
+        onChange={setModel}
+        options={modelOptions}
+      />
 
       <div>
         <button className={styles.button} onClick={clearMessages}>

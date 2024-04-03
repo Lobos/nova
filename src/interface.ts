@@ -12,6 +12,7 @@ export interface Store {
   key: string
   system?: string
   messages: Message[]
+  model: string
   chats: Chat[]
   current?: Message & { abort?: () => void }
   sending: boolean
