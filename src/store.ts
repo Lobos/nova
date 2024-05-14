@@ -34,6 +34,7 @@ export const modelOptions = [
   "gpt-3.5-turbo-0125",
   "gpt-3.5-turbo-0301",
   "gpt-3.5-turbo-0613",
+  "gpt-4o",
 ]
 
 export const summary = async (length = 0) => {
