@@ -107,8 +107,6 @@ export const System = () => {
 
   return (
     <div ref={systemRef} className={styles.system}>
-      <Key />
-
       <Block
         label="Temperature"
         value={state.temperature + ""}
@@ -150,6 +148,10 @@ export const System = () => {
           className="file-input"
           style={{ display: "none" }}
         />
+
+        <Key name="openai" />
+
+        <Key name="deepseek" />
       </div>
     </div>
   )

@@ -8,7 +8,10 @@ export interface Chat {
   assistant: string
 }
 
+export type AiName = "openai" | "deepseek"
+
 export interface Store {
+  keys: Record<AiName, string>
   key: string
   system?: string
   messages: Message[]

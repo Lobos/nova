@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from "openai"
 import { proxy } from "valtio"
-import { Store, Message, ImportData } from "./interface"
+import { Store, Message, ImportData, AiName } from "./interface"
 import {
   chatsToMessages,
   setStorage,
@@ -10,6 +10,7 @@ import {
 } from "./utils"
 
 export const store = proxy<Store>({
+  keys: getStorage("keys", {}) as any,
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
   model: localStorage.getItem("model") || "gpt-3.5-turbo",
@@ -35,6 +36,7 @@ export const modelOptions = [
   "gpt-3.5-turbo-0301",
   "gpt-3.5-turbo-0613",
   "gpt-4o",
+  "deepseek-chat",
 ]
 
 export const summary = async (length = 0) => {
@@ -65,27 +67,6 @@ export const summary = async (length = 0) => {
       ...store.chats.slice(summaryLength),
     ]
   }
-
-  /* prompt 有点傻，待挖掘
-  const prompt: string = getPrompt(
-    chats.slice(0, reserveLength),
-    "用50字以内以第一人称总结以上对话",
-    system
-  )
-  const result = await getOpenai().createCompletion({
-    model: "text-curie-001",
-    prompt,
-  })
-
-  console.log(result)
-
-  if (result.data.choices[0]?.text) {
-    store.chats = [
-      { assistant: result.data.choices[0].text },
-      ...store.chats.slice(reserveLength),
-    ]
-  }
-  */
 }
 
 export const modifyMessage = (
@@ -119,15 +100,33 @@ export const modifyMessage = (
   }
 }
 
+const getKey = () => {
+  switch (store.model) {
+    case "deepseek-chat":
+      return store.keys.deepseek
+    default:
+      return store.keys.openai
+  }
+}
+
+const getURL = () => {
+  switch (store.model) {
+    case "deepseek-chat":
+      return "https://api.deepseek.com/chat/completions"
+    default:
+      return "https://api.openai.com/v1/chat/completions"
+  }
+}
+
 const fetchMessage = async (messages: Message[]) => {
   const decoder = new TextDecoder("utf-8")
   const controller = new AbortController()
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch(getURL(), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${store.key}`,
+      Authorization: `Bearer ${getKey()}`,
     },
     body: JSON.stringify({
       model: store.model,
@@ -220,9 +219,9 @@ export const importData = (data: ImportData) => {
   toggleSystem(false)
 }
 
-export const setKey = (key: string) => {
-  store.key = key
-  localStorage.setItem("key", key)
+export const setKey = (name: AiName, key: string) => {
+  store.keys[name] = key
+  setStorage("keys", store.keys)
 }
 
 export const setSystem = (system: string) => {

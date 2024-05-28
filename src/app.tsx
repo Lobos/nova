@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from "react"
 import { useSnapshot } from "valtio"
 import { store, toggleSystem } from "./store"
-import Key from "./key"
 import { System } from "./system"
 import Chat from "./chat"
 import Messages from "./messages"
@@ -23,10 +22,6 @@ function App() {
   const handleHeaderClick = useCallback(() => {
     toggleSystem()
   }, [])
-
-  if (!state.key) {
-    return <Key />
-  }
 
   return (
     <div className={styles.root}>

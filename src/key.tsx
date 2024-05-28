@@ -1,7 +1,9 @@
 import { proxy, useSnapshot } from "valtio"
-import { checkKey } from "./utils"
 import { setKey } from "./store"
 import { useStyles } from "./styles"
+import { AiName } from "./interface"
+import { useMemo } from "react"
+import { getStorage } from "./utils"
 
 interface KeyStore {
   key: string
@@ -9,12 +11,21 @@ interface KeyStore {
   loading?: boolean
 }
 
-const keyStore = proxy<KeyStore>({
-  key: localStorage.getItem("key") || "",
-  loading: false,
-})
+interface Props {
+  name: AiName
+}
 
-export default function Key() {
+export default function Key(props: Props) {
+  const { name } = props
+
+  const keyStore = useMemo(() => {
+    const keys = getStorage("keys", {}) as Record<AiName, string>
+    return proxy<KeyStore>({
+      key: keys[name] || "",
+      loading: false,
+    })
+  }, [name])
+
   const { key, error, loading } = useSnapshot(keyStore)
   const styles = useStyles()
 
@@ -22,9 +33,9 @@ export default function Key() {
     // 处理 loading
     keyStore.loading = true
     try {
-      await checkKey(key)
+      // await checkKey(key)
       keyStore.loading = false
-      setKey(key)
+      setKey(name, key)
     } catch (e: any) {
       keyStore.loading = false
       keyStore.error = e.message
@@ -34,7 +45,7 @@ export default function Key() {
   return (
     <div>
       <label>
-        <span>OpenAI Key</span>
+        <span>{name.toUpperCase()} Key</span>
 
         <button
           disabled={loading}
