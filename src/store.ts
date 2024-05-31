@@ -30,6 +30,33 @@ const getOpenai = () => {
   return openai
 }
 
+const getKey = () => {
+  switch (store.model) {
+    case "deepseek-chat":
+      return store.keys.deepseek
+    default:
+      return store.keys.openai
+  }
+}
+
+const getURL = () => {
+  switch (store.model) {
+    case "deepseek-chat":
+      return "https://api.deepseek.com/chat/completions"
+    default:
+      return "https://api.openai.com/v1/chat/completions"
+  }
+}
+
+const getReserveLength = () => {
+  switch (store.model) {
+    case "deepseek-chat":
+      return 7
+    default:
+      return 2
+  }
+}
+
 export const modelOptions = [
   "gpt-3.5-turbo",
   "gpt-3.5-turbo-0125",
@@ -41,9 +68,9 @@ export const modelOptions = [
 
 export const summary = async (length = 0) => {
   const { chats } = store
-  const reserveLength = 2
+  const reserveLength = getReserveLength()
   const summaryLength = chats.length - reserveLength
-  if (length < 1000 && chats.length < reserveLength + 5) {
+  if (length < 1000 && chats.length < reserveLength * 2 + 1) {
     return
   }
 
@@ -92,29 +119,11 @@ export const modifyMessage = (
       ...store.messages.slice(0, Math.floor(index / 2) * 2),
     ]
     store.messages = messages
-    // 根据最近8条消息重建会话
-    store.chats = messagesToChats(messages.slice(-8))
+    // 根据最近10条消息重建会话
+    store.chats = messagesToChats(messages.slice(-10))
 
     // 如果 content 不为空，发送消息
     sendMessage(content)
-  }
-}
-
-const getKey = () => {
-  switch (store.model) {
-    case "deepseek-chat":
-      return store.keys.deepseek
-    default:
-      return store.keys.openai
-  }
-}
-
-const getURL = () => {
-  switch (store.model) {
-    case "deepseek-chat":
-      return "https://api.deepseek.com/chat/completions"
-    default:
-      return "https://api.openai.com/v1/chat/completions"
   }
 }
 
