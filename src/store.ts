@@ -35,7 +35,7 @@ const getURL = () => {
     case "deepseek-chat":
       return "https://api.deepseek.com/chat/completions"
     default:
-      return `${store.apiUrl}/${store.model}`
+      return `${store.apiUrl}/chat/${store.model}`
   }
 }
 
@@ -47,17 +47,6 @@ const getReserveLength = () => {
       return 2
   }
 }
-
-export const modelOptions = [
-  "gpt-3.5-turbo",
-  "gpt-3.5-turbo-0301",
-  "gpt-4o",
-  "deepseek-chat",
-  "llama-3-8b-instruct",
-  "qwen1.5-14b-chat-awq",
-  "openchat-3.5-0106",
-  "gemma-7b-it-lora",
-]
 
 export const summary = async (length = 0) => {
   const { chats } = store
@@ -71,7 +60,7 @@ export const summary = async (length = 0) => {
     role: "user",
     content: '用50字以内总结以上对话，以你为第一视角，我为对话者"',
   })
-  const response = await fetch(`${store.apiUrl}/qwen1.5-14b-chat-awq`, {
+  const response = await fetch(`${store.apiUrl}/chat/qwen1.5-14b-chat-awq`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -138,7 +127,7 @@ const fetchMessage = async (messages: Message[]) => {
       messages,
       temperature: store.temperature,
       stream: true,
-      safe_mode: false
+      safe_mode: false,
     }),
     signal: controller?.signal,
   })

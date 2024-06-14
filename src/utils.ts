@@ -1,20 +1,4 @@
-import { Configuration, OpenAIApi } from "openai"
 import { Chat, ImportData, Message } from "./interface"
-
-export const checkKey = async (key: string) => {
-  const openai = new OpenAIApi(new Configuration({ apiKey: key }))
-
-  const res = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: "hello gpt." }],
-  })
-
-  if (res.data.created) {
-    return true
-  }
-
-  throw new Error("send error")
-}
 
 export const chatsToMessages = (chats: Chat[], current: Message) => {
   const messages: Message[] = []

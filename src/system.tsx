@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSnapshot } from "valtio"
 import {
   store,
@@ -8,7 +8,6 @@ import {
   setTemperature,
   setModel,
   importData,
-  modelOptions,
   setApiUrl,
 } from "./store"
 import Textarea from "./textarea"
@@ -60,6 +59,7 @@ const Block = ({ label, value, onChange, options }: Props) => {
 export const System = () => {
   const styles = useStyles()
   const state = useSnapshot(store)
+  const [models, setModels] = useState<string[]>([])
   const systemRef = useRef<HTMLDivElement>(null)
 
   let summary = ""
@@ -67,20 +67,13 @@ export const System = () => {
     summary = state.chats[0].assistant
   }
 
-  /*
   useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      if (!systemRef?.current?.contains(event.target as Node)) {
-        toggleSystem(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClick)
-    return () => {
-      document.removeEventListener("mousedown", handleClick)
-    }
-  }, [])
-  */
+    fetch(`${state.apiUrl}/model-list`, {
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((r) => r.json())
+      .then(setModels)
+  }, [state.apiUrl])
 
   const handleExport = () => {
     const data: ImportData = {
@@ -122,7 +115,7 @@ export const System = () => {
         label="Model"
         value={state.model}
         onChange={setModel}
-        options={modelOptions}
+        options={models}
       />
 
       <div>
