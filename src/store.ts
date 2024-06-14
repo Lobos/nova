@@ -55,6 +55,7 @@ export const modelOptions = [
   "deepseek-chat",
   "llama-3-8b-instruct",
   "qwen1.5-14b-chat-awq",
+  "openchat-3.5-0106",
   "gemma-7b-it-lora",
 ]
 
