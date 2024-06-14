@@ -8,7 +8,7 @@ export interface Chat {
   assistant: string
 }
 
-export type AiName = "openai" | "deepseek"
+export type AiName = "openai" | "deepseek" | "cloudflare"
 
 export interface Store {
   keys: Record<AiName, string>
@@ -18,6 +18,7 @@ export interface Store {
   model: string
   chats: Chat[]
   current?: Message & { abort?: () => void }
+  cfAccountId: string
   sending: boolean
   systemVisible: boolean
   temperature: number

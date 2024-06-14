@@ -115,8 +115,8 @@ export const getContentFromStream = (buf: Uint8Array, decoder: TextDecoder) => {
   let result = ""
   text.split(/\n+/).forEach((line) => {
     if (line.startsWith("data: {")) {
-      result +=
-        JSON.parse(line.slice(6).trim()).choices?.[0]?.delta?.content || ""
+      const d = JSON.parse(line.slice(6).trim())
+      result += d.response ? d.response : d.choices?.[0]?.delta?.content || ""
     }
   })
   return result

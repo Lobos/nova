@@ -149,9 +149,8 @@ export const System = () => {
           style={{ display: "none" }}
         />
 
-        <Key name="openai" />
-
         <Key name="deepseek" />
+        <Key name="cloudflare" />
       </div>
     </div>
   )

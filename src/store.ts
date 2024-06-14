@@ -1,4 +1,3 @@
-import { Configuration, OpenAIApi } from "openai"
 import { proxy } from "valtio"
 import { Store, Message, ImportData, AiName } from "./interface"
 import {
@@ -14,6 +13,7 @@ export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
   model: localStorage.getItem("model") || "gpt-3.5-turbo",
+  cfAccountId: localStorage.getItem("cfAccountId") || "",
   messages: getStorage("messages", []),
   chats: getStorage("chats", []),
   sending: false,
@@ -21,21 +21,12 @@ export const store = proxy<Store>({
   temperature: getStorage("temperature", 0.8),
 })
 
-let openai: OpenAIApi
-const getOpenai = () => {
-  if (openai == null) {
-    openai = new OpenAIApi(new Configuration({ apiKey: store.key }))
-  }
-
-  return openai
-}
-
 const getKey = () => {
   switch (store.model) {
     case "deepseek-chat":
       return store.keys.deepseek
     default:
-      return store.keys.openai
+      return store.keys.cloudflare
   }
 }
 
@@ -44,7 +35,7 @@ const getURL = () => {
     case "deepseek-chat":
       return "https://api.deepseek.com/chat/completions"
     default:
-      return "https://api.openai.com/v1/chat/completions"
+      return `https://ai-proxy.lobos841.workers.dev/chat/${store.model}`
   }
 }
 
@@ -59,11 +50,11 @@ const getReserveLength = () => {
 
 export const modelOptions = [
   "gpt-3.5-turbo",
-  "gpt-3.5-turbo-0125",
   "gpt-3.5-turbo-0301",
-  "gpt-3.5-turbo-0613",
   "gpt-4o",
   "deepseek-chat",
+  "llama-3-8b-instruct",
+  "qwen1.5-14b-chat-awq",
 ]
 
 export const summary = async (length = 0) => {
@@ -78,18 +69,24 @@ export const summary = async (length = 0) => {
     role: "user",
     content: '用50字以内总结以上对话，以你为第一视角，我为对话者"',
   })
-  const result = await getOpenai().createChatCompletion({
-    model: store.model,
-    messages: sendMessages,
-  })
+  const response = await fetch(
+    "https://ai-proxy.lobos841.workers.dev/chat/qwen1.5-14b-chat-awq",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${store.keys.cloudflare}`,
+      },
+      body: JSON.stringify({
+        messages: sendMessages,
+      }),
+    }
+  ).then((res) => res.json())
 
-  if (result.data.choices[0]?.message) {
+  if (response) {
     store.chats = [
       {
-        assistant: result.data.choices[0].message.content.replaceAll(
-          "对话者",
-          "你"
-        ),
+        assistant: response.result.response.replaceAll("对话者", "你"),
       },
       ...store.chats.slice(summaryLength),
     ]
@@ -245,6 +242,11 @@ export const setModel = (model: string) => {
   toggleSystem(false)
 }
 
+export const setCFAccountId = (cfAccountId: string) => {
+  store.cfAccountId = cfAccountId
+  localStorage.setItem("cfAccountId", cfAccountId)
+}
+
 export const setSummary = (summary: string) => {
   if (store.chats.length > 0) {
     store.chats[0].assistant = summary
@@ -255,7 +257,6 @@ export const setSummary = (summary: string) => {
 }
 
 export const toggleSystem = (visible?: boolean) => {
-  console.log(visible)
   store.systemVisible = visible == undefined ? !store.systemVisible : visible
 }
 
