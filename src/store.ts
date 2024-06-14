@@ -13,7 +13,7 @@ export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
   model: localStorage.getItem("model") || "gpt-3.5-turbo",
-  cfAccountId: localStorage.getItem("cfAccountId") || "",
+  apiUrl: localStorage.getItem("apiUrl") || "",
   messages: getStorage("messages", []),
   chats: getStorage("chats", []),
   sending: false,
@@ -35,7 +35,7 @@ const getURL = () => {
     case "deepseek-chat":
       return "https://api.deepseek.com/chat/completions"
     default:
-      return `https://ai-proxy.lobos841.workers.dev/chat/${store.model}`
+      return `${store.apiUrl}/${store.model}`
   }
 }
 
@@ -69,19 +69,16 @@ export const summary = async (length = 0) => {
     role: "user",
     content: '用50字以内总结以上对话，以你为第一视角，我为对话者"',
   })
-  const response = await fetch(
-    "https://ai-proxy.lobos841.workers.dev/chat/qwen1.5-14b-chat-awq",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${store.keys.cloudflare}`,
-      },
-      body: JSON.stringify({
-        messages: sendMessages,
-      }),
-    }
-  ).then((res) => res.json())
+  const response = await fetch(`${store.apiUrl}/qwen1.5-14b-chat-awq`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${store.keys.cloudflare}`,
+    },
+    body: JSON.stringify({
+      messages: sendMessages,
+    }),
+  }).then((res) => res.json())
 
   if (response) {
     store.chats = [
@@ -242,9 +239,9 @@ export const setModel = (model: string) => {
   toggleSystem(false)
 }
 
-export const setCFAccountId = (cfAccountId: string) => {
-  store.cfAccountId = cfAccountId
-  localStorage.setItem("cfAccountId", cfAccountId)
+export const setApiUrl = (apiUrl: string) => {
+  store.apiUrl = apiUrl
+  localStorage.setItem("apiUrl", apiUrl)
 }
 
 export const setSummary = (summary: string) => {

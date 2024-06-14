@@ -9,6 +9,7 @@ import {
   setModel,
   importData,
   modelOptions,
+  setApiUrl,
 } from "./store"
 import Textarea from "./textarea"
 import Key from "./key"
@@ -148,6 +149,8 @@ export const System = () => {
           className="file-input"
           style={{ display: "none" }}
         />
+
+        <Block label="API URL" value={state.apiUrl} onChange={setApiUrl} />
 
         <Key name="deepseek" />
         <Key name="cloudflare" />

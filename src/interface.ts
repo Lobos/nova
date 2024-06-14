@@ -18,7 +18,7 @@ export interface Store {
   model: string
   chats: Chat[]
   current?: Message & { abort?: () => void }
-  cfAccountId: string
+  apiUrl: string
   sending: boolean
   systemVisible: boolean
   temperature: number
