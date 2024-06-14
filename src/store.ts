@@ -136,6 +136,7 @@ const fetchMessage = async (messages: Message[]) => {
       messages,
       temperature: store.temperature,
       stream: true,
+      safe_mode: false
     }),
     signal: controller?.signal,
   })
