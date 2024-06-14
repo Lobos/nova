@@ -42,7 +42,7 @@ const getURL = () => {
 const getReserveLength = () => {
   switch (store.model) {
     case "deepseek-chat":
-      return 7
+      return 5
     default:
       return 2
   }
