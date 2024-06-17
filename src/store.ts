@@ -19,7 +19,7 @@ export const store = proxy<Store>({
   sending: false,
   systemVisible: getStorage("messages", []).length === 0,
   temperature: getStorage("temperature", 0.8),
-  modelList: ["deepseek-chat", "gpt-3.5-turbo"],
+  modelList: getStorage("model-list", ["deepseek-chat", "gpt-3.5-turbo"]),
 })
 
 const getKey = () => {
@@ -267,6 +267,7 @@ export const initModelList = () => {
   })
     .then((r) => r.json())
     .then((models) => {
+      setStorage("model-list", models)
       store.modelList = models
     })
 }
