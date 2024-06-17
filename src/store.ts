@@ -127,8 +127,7 @@ const fetchMessage = async (messages: Message[]) => {
       model: store.model,
       messages,
       temperature: store.temperature,
-      stream: true,
-      safe_mode: false,
+      stream: true
     }),
     signal: controller?.signal,
   })
