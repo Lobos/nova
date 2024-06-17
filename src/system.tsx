@@ -59,21 +59,12 @@ const Block = ({ label, value, onChange, options }: Props) => {
 export const System = () => {
   const styles = useStyles()
   const state = useSnapshot(store)
-  const [models, setModels] = useState<string[]>([])
   const systemRef = useRef<HTMLDivElement>(null)
 
   let summary = ""
   if (state.chats[0] && state.chats[0].user == null) {
     summary = state.chats[0].assistant
   }
-
-  useEffect(() => {
-    fetch(`${state.apiUrl}/model-list`, {
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((r) => r.json())
-      .then(setModels)
-  }, [state.apiUrl])
 
   const handleExport = () => {
     const data: ImportData = {
@@ -115,7 +106,7 @@ export const System = () => {
         label="Model"
         value={state.model}
         onChange={setModel}
-        options={models}
+        options={store.modelList}
       />
 
       <div>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react"
 import { useSnapshot } from "valtio"
-import { store, toggleSystem } from "./store"
+import { initModelList, store, toggleSystem } from "./store"
 import { System } from "./system"
 import Chat from "./chat"
 import Messages from "./messages"
@@ -18,6 +18,10 @@ function App() {
       placeholderRef.current.scrollIntoView()
     }
   }, [state.messages.length, height, state.current?.content])
+
+  useEffect(() => {
+    initModelList()
+  }, [])
 
   const handleHeaderClick = useCallback(() => {
     toggleSystem()

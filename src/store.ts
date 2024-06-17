@@ -12,13 +12,14 @@ export const store = proxy<Store>({
   keys: getStorage("keys", {}) as any,
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
-  model: localStorage.getItem("model") || "gpt-3.5-turbo",
+  model: localStorage.getItem("model") || "deepseek-chat",
   apiUrl: localStorage.getItem("apiUrl") || "",
   messages: getStorage("messages", []),
   chats: getStorage("chats", []),
   sending: false,
   systemVisible: getStorage("messages", []).length === 0,
   temperature: getStorage("temperature", 0.8),
+  modelList: ["deepseek-chat", "gpt-3.5-turbo"],
 })
 
 const getKey = () => {
@@ -257,4 +258,15 @@ export const setTemperature = (temperature: string) => {
     store.temperature = temp
     setStorage("temperature", temp)
   }
+}
+
+export const initModelList = () => {
+  if (!store.apiUrl) return
+  fetch(`${store.apiUrl}/model-list`, {
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((r) => r.json())
+    .then((models) => {
+      store.modelList = models
+    })
 }

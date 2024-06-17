@@ -22,6 +22,7 @@ export interface Store {
   sending: boolean
   systemVisible: boolean
   temperature: number
+  modelList: string[]
 }
 
 export interface ImportData {
