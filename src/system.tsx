@@ -1,4 +1,4 @@
-import { ReactEventHandler, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useSnapshot } from "valtio"
 import {
   store,
