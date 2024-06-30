@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { ReactEventHandler, useRef, useState } from "react"
 import { useSnapshot } from "valtio"
 import {
   store,
@@ -18,13 +18,45 @@ import { downloadData, importFromFile } from "./utils"
 
 interface Props {
   label: string
-  value: string
-  onChange: (value: string) => void
+  value: string | string[]
+  onChange: (value: any) => void
   options?: string[]
 }
 
+const Select = (props: Props) => {
+  const styles = useStyles()
+  const value = props.value as string[]
+  const options = props.options || []
+  const { onChange } = props
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const t = e.target.value
+    if (value.includes(e.target.value)) {
+      onChange(value.filter((v) => v !== t))
+    } else {
+      onChange([...value, t])
+    }
+  }
+
+  return (
+    <select
+      className={styles.input}
+      value={value}
+      multiple
+      //onChange={(event) => setText(event.target.value)}
+      onChange={handleChange}
+    >
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 const Block = ({ label, value, onChange, options }: Props) => {
-  const [text, setText] = useState<string>(value)
+  const [text, setText] = useState<string | string[]>(value)
   const styles = useStyles()
 
   return (
@@ -38,19 +70,18 @@ const Block = ({ label, value, onChange, options }: Props) => {
       </label>
 
       {options ? (
-        <select
-          className={styles.input}
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <Select
+          label=""
+          value={text as string[]}
+          onChange={setText}
+          options={options}
+        />
       ) : (
-        <Textarea className={styles.input} value={text} onChange={setText} />
+        <Textarea
+          className={styles.input}
+          value={text as string}
+          onChange={setText}
+        />
       )}
     </div>
   )
@@ -104,7 +135,7 @@ export const System = () => {
 
       <Block
         label="Model"
-        value={state.model}
+        value={state.models as string[]}
         onChange={setModel}
         options={store.modelList}
       />

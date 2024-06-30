@@ -4,7 +4,7 @@ import { useStyles } from "./styles"
 import Loading from "./loading"
 
 export default function Current() {
-  const { current, sending } = useSnapshot(store)
+  const { current, sending, model } = useSnapshot(store)
   const styles = useStyles()
 
   if (current) {
@@ -37,6 +37,7 @@ export default function Current() {
         )}
         {current.role === "assistant" && (
           <div className={styles.currentStatus}>
+            {model}
             <button
               className={styles.button}
               onClick={() => {

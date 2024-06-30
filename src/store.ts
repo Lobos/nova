@@ -13,6 +13,7 @@ export const store = proxy<Store>({
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
   model: localStorage.getItem("model") || "deepseek-chat",
+  models: getStorage("models", ["deepseek-chat"]),
   apiUrl: localStorage.getItem("apiUrl") || "",
   messages: getStorage("messages", []),
   chats: getStorage("chats", []),
@@ -41,12 +42,12 @@ const getURL = () => {
 }
 
 const getReserveLength = () => {
-  switch (store.model) {
-    case "deepseek-chat":
-      return 5
-    default:
-      return 2
-  }
+  return store.model.startsWith("gpt") ? 2 : 5
+}
+
+const changeModel = () => {
+  const randomIndex = Math.floor(Math.random() * store.models.length)
+  store.model = store.models[randomIndex]
 }
 
 export const summary = async (length = 0) => {
@@ -127,7 +128,7 @@ const fetchMessage = async (messages: Message[]) => {
       model: store.model,
       messages,
       temperature: store.temperature,
-      stream: true
+      stream: true,
     }),
     signal: controller?.signal,
   })
@@ -186,6 +187,7 @@ export const sendMessage = async (content: string) => {
     setStorage("messages", store.messages)
     setStorage("chats", store.chats)
 
+    changeModel()
     summary()
   } catch (e) {
     console.error(e)
@@ -225,9 +227,9 @@ export const setSystem = (system: string) => {
   toggleSystem(false)
 }
 
-export const setModel = (model: string) => {
-  store.model = model
-  localStorage.setItem("model", model)
+export const setModel = (models: string[]) => {
+  store.models = models
+  setStorage("models", models)
   toggleSystem(false)
 }
 

@@ -16,6 +16,7 @@ export interface Store {
   system?: string
   messages: Message[]
   model: string
+  models: string[]
   chats: Chat[]
   current?: Message & { abort?: () => void }
   apiUrl: string
