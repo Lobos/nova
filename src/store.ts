@@ -133,6 +133,7 @@ const fetchMessage = async (messages: Message[]) => {
     signal: controller?.signal,
   })
 
+  changeModel()
   if (!response.body) throw new Error("error")
 
   if (store.current) store.messages.push(store.current)
@@ -187,7 +188,6 @@ export const sendMessage = async (content: string) => {
     setStorage("messages", store.messages)
     setStorage("chats", store.chats)
 
-    changeModel()
     summary()
   } catch (e) {
     console.error(e)

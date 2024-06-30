@@ -21,6 +21,7 @@ export default function Current() {
             )}
           </div>
         </div>
+        <div style={{ textAlign: "center" }}>{model}</div>
         {current.role === "user" && (
           <div className={styles.currentStatus}>
             {sending ? (
@@ -37,7 +38,6 @@ export default function Current() {
         )}
         {current.role === "assistant" && (
           <div className={styles.currentStatus}>
-            {model}
             <button
               className={styles.button}
               onClick={() => {

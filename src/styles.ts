@@ -145,7 +145,7 @@ export const useStyles = createUseStyles({
   },
 
   currentStatus: {
-    "& > span, & > button": {
+    "& > span, & > div, & > button": {
       margin: "auto",
     },
   },
