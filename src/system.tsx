@@ -24,12 +24,11 @@ interface Props {
 }
 
 const Select = (props: Props) => {
-  const styles = useStyles()
   const value = props.value as string[]
   const options = props.options || []
   const { onChange } = props
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const t = e.target.value
     if (value.includes(e.target.value)) {
       onChange(value.filter((v) => v !== t))
@@ -39,19 +38,20 @@ const Select = (props: Props) => {
   }
 
   return (
-    <select
-      className={styles.input}
-      value={value}
-      multiple
-      //onChange={(event) => setText(event.target.value)}
-      onChange={handleChange}
-    >
+    <>
       {options.map((option) => (
-        <option key={option} value={option}>
+        <label>
+          <input
+            type="checkbox"
+            key={option}
+            value={option}
+            checked={value.includes(option)}
+            onChange={handleChange}
+          />
           {option}
-        </option>
+        </label>
       ))}
-    </select>
+    </>
   )
 }
 
