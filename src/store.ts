@@ -118,18 +118,24 @@ const fetchMessage = async (messages: Message[]) => {
   const decoder = new TextDecoder("utf-8")
   const controller = new AbortController()
 
+  const body = {
+    model: store.model,
+    messages,
+    temperature: store.temperature,
+    stream: true,
+  }
+
+  if (!store.model.startWith("gpt")) {
+    body.safe_mode = false
+  }
+
   const response = await fetch(getURL(), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getKey()}`,
     },
-    body: JSON.stringify({
-      model: store.model,
-      messages,
-      temperature: store.temperature,
-      stream: true,
-    }),
+    body: JSON.stringify(body),
     signal: controller?.signal,
   })
 
