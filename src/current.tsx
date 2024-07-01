@@ -12,7 +12,7 @@ export default function Current() {
       <>
         <div className={styles[current.role]}>
           <div className={styles.avatar}>
-            {current.role === "user" ? "我" : "N"}
+            {current.role === "user" ? "我" : model[0].toUpperCase()}
           </div>
           <div className={styles.message}>
             {current.content}
@@ -21,7 +21,6 @@ export default function Current() {
             )}
           </div>
         </div>
-        <div style={{ textAlign: "center" }}>{model}</div>
         {current.role === "user" && (
           <div className={styles.currentStatus}>
             {sending ? (
