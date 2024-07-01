@@ -12,7 +12,7 @@ export const store = proxy<Store>({
   keys: getStorage("keys", {}) as any,
   key: localStorage.getItem("key") as string,
   system: localStorage.getItem("system") || undefined,
-  model: localStorage.getItem("model") || "deepseek-chat",
+  model: getStorage("models", [])[0] || "deepseek-chat",
   models: getStorage("models", ["deepseek-chat"]),
   apiUrl: localStorage.getItem("apiUrl") || "",
   messages: getStorage("messages", []),
