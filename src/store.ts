@@ -118,14 +118,14 @@ const fetchMessage = async (messages: Message[]) => {
   const decoder = new TextDecoder("utf-8")
   const controller = new AbortController()
 
-  const body = {
+  const body: any = {
     model: store.model,
     messages,
     temperature: store.temperature,
     stream: true,
   }
 
-  if (!store.model.startWith("gpt")) {
+  if (!store.model.startsWith("gpt")) {
     body.safe_mode = false
   }
 
